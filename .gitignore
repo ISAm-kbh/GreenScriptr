@@ -1,6 +1,9 @@
 # Build Folder
 build/
 
+# Clangd cache
+.cache/
+
 # C++ objects and libs
 *.slo
 *.lo
