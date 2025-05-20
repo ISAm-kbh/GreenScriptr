@@ -6,13 +6,34 @@ using std::vector;
 using std::tuple;
 
 GreenCommand::GreenCommand() {
-    path = string();
-    defaultArgs = vector<string>();
-    fillableArgs = vector<tuple<string, string>>();
+    this->path = string();
+    this->defaultArgs = vector<string>();
+    this->fillableArgs = vector<tuple<string, string>>();
+}
+
+GreenCommand::GreenCommand(const GreenCommand & other) {
+    this->path = other.path;
+    this->defaultArgs = other.defaultArgs;
+    this->fillableArgs = other.fillableArgs;
+}
+
+GreenCommand::GreenCommand(GreenCommand && other) {
+    this->path = std::move(other.path);
+    this->defaultArgs = std::move(other.defaultArgs);
+    this->fillableArgs = std::move(other.fillableArgs);
+}
+
+
+GreenCommand::GreenCommand(string _path,
+        vector<string> _defArgs,
+        vector<tuple<string, string>> _fillArgs) {
+    this->path = string(_path);
+    this->defaultArgs = vector<string>(_defArgs);
+    this->fillableArgs = vector<tuple<string, string>>(_fillArgs);
 }
 
 string GreenCommand::AssembleCommand() const {
-    string finalCommand = "";
+    string finalCommand = string();
 
     finalCommand.append(path);
     
@@ -47,4 +68,28 @@ string GreenCommand::AssembleCommand() const {
     }
 
     return finalCommand;
+}
+
+GreenCommand& GreenCommand::operator=(const GreenCommand & other) {
+    if (this == &other) {
+       return *this;
+    } 
+
+    this->path = other.path;
+    this->defaultArgs = other.defaultArgs;
+    this->fillableArgs = other.fillableArgs;
+
+    return *this;
+}
+
+GreenCommand& GreenCommand::operator=(GreenCommand && other) {
+    if (this == &other) {
+        return *this;
+    }
+
+    this->path = std::move(other.path);
+    this->defaultArgs = std::move(other.defaultArgs);
+    this->fillableArgs = std::move(other.fillableArgs);
+    
+    return *this;
 }
