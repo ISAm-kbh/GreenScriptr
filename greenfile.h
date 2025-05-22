@@ -2,14 +2,17 @@
 #define GREENFILE_H
 
 #include "greencommand.h"
-#include <QString>
 #include <optional>
+#include <QJsonObject>
+#include <Qfile>
 
 class GreenFile
 {
-public:
-    GreenFile() = delete;
-    static std::optional<GreenCommand> loadFromFile(const QString &filePath);
+    public:
+        GreenFile();
+
+        std::optional<GreenCommand> loadCommandFromJson(const QJsonObject &json) const;
+
 };
 
 #endif // GREENFILE_H
