@@ -4,12 +4,6 @@
 
 using std::tuple;
 
-GreenCommand::GreenCommand() {
-    this->path = QString();
-    this->defaultArgs = QStringList();
-    this->fillableArgs = QList<tuple<QString, QString>>();
-}
-
 GreenCommand::GreenCommand(const GreenCommand & other) {
     this->path = other.path;
     this->defaultArgs = other.defaultArgs;
