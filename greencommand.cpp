@@ -23,15 +23,6 @@ GreenCommand::GreenCommand(GreenCommand && other) {
     this->fillableArgs = std::move(other.fillableArgs);
 }
 
-
-GreenCommand::GreenCommand(string _path,
-        vector<string> _defArgs,
-        vector<tuple<string, string>> _fillArgs) {
-    this->path = string(_path);
-    this->defaultArgs = vector<string>(_defArgs);
-    this->fillableArgs = vector<tuple<string, string>>(_fillArgs);
-}
-
 string GreenCommand::AssembleCommand() const {
     string finalCommand = string();
 

@@ -19,9 +19,10 @@ class GreenCommand
         GreenCommand &operator=(GreenCommand &&);
 
         GreenCommand(
-            std::string _path, 
-            std::vector<std::string> _defArgs,
-            std::vector<std::tuple<std::string, std::string>> _fillArgs);
+            const std::string &_path, 
+            const std::vector<std::string> &_defArgs,
+            const std::vector<std::tuple<std::string, std::string>> &_fillArgs)
+            : path(_path), defaultArgs(_defArgs), fillableArgs(_fillArgs) {}
 
         std::string AssembleCommand() const;
 };
