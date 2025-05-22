@@ -20,6 +20,8 @@ class GreenFile
         std::optional<QJsonObject> loadJsonFromFile();
         std::optional<GreenCommand> loadCommandFromJson(const QJsonObject &json) const;
         std::optional<QString> loadWorkingDirFromJson(const QJsonObject &json) const;
+
+        QJsonObject encodeWorkingDirIntoJson(const QString &_workingDir) const;
 };
 
 #endif // GREENFILE_H

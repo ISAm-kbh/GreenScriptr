@@ -94,3 +94,9 @@ std::optional<QString> GreenFile::loadWorkingDirFromJson(const QJsonObject &json
 
     return valueDir.toString();
 }
+
+QJsonObject GreenFile::encodeWorkingDirIntoJson(const QString &_workingDir) const {
+    QJsonObject returnObject;
+    returnObject["workindDirectory"] = _workingDir;
+    return returnObject;
+}
