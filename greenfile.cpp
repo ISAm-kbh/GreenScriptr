@@ -11,7 +11,7 @@
 using std::tuple;
 
 bool GreenFile::openFile() {
-    return this->file.open(QIODevice::ReadWrite | QIODevice::Text);
+    return this->file.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text);
 }
 
 std::optional<QJsonObject> GreenFile::loadJsonFromFile() {
