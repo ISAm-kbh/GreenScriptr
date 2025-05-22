@@ -34,13 +34,13 @@ std::optional<QJsonObject> GreenFile::loadJsonFromFile() {
 }
 
 std::optional<GreenCommand> GreenFile::loadCommandFromJson(const QJsonObject &json) const {
-    const QJsonValue valuePath = json["path"];
+    const QJsonValue valuePath = json[jsonKeyScriptPath];
     if (!valuePath.isString()) {
         return std::nullopt;
     }
     const QString stringPath = valuePath.toString();
 
-    const QJsonValue valueDefArgs = json["defaultArguments"];
+    const QJsonValue valueDefArgs = json[jsonKeyDefaultArgs];
     if (!valueDefArgs.isArray()) {
         return std::nullopt;
     }
@@ -56,7 +56,7 @@ std::optional<GreenCommand> GreenFile::loadCommandFromJson(const QJsonObject &js
         stringListDefArgs.append(stringArrayValue);
     }
 
-    const QJsonValue valueFillArgs = json["fillableArguments"];
+    const QJsonValue valueFillArgs = json[jsonKeyFillableArgs];
     if (!valueFillArgs.isArray()) {
         return std::nullopt;
     }
@@ -87,7 +87,7 @@ std::optional<GreenCommand> GreenFile::loadCommandFromJson(const QJsonObject &js
 }
 
 std::optional<QString> GreenFile::loadWorkingDirFromJson(const QJsonObject &json) const {
-    const QJsonValue valueDir = json["workingDirectory"];
+    const QJsonValue valueDir = json[jsonKeyWorkingDir];
     if (!valueDir.isString()) {
         return std::nullopt;
     }
@@ -97,6 +97,6 @@ std::optional<QString> GreenFile::loadWorkingDirFromJson(const QJsonObject &json
 
 QJsonObject GreenFile::encodeWorkingDirIntoJson(const QString &_workingDir) const {
     QJsonObject returnObject;
-    returnObject["workindDirectory"] = _workingDir;
+    returnObject[jsonKeyWorkingDir] = _workingDir;
     return returnObject;
 }

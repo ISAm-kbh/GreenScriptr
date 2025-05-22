@@ -12,6 +12,10 @@ class GreenFile
 {
     public:
         QFile file;
+        const QString jsonKeyWorkingDir = "workingDirectory";
+        const QString jsonKeyScriptPath = "scriptPath";
+        const QString jsonKeyDefaultArgs = "defaultArguments";
+        const QString jsonKeyFillableArgs = "fillableArguments";
 
         GreenFile(const std::filesystem::path &_filePath) : file(_filePath) {}
 
