@@ -15,7 +15,7 @@ bool GreenFile::openFile() {
 }
 
 std::optional<QJsonObject> GreenFile::loadJsonFromFile() {
-    if (!this->file.isOpen()) {
+    if (!(this->file.isOpen() && this->file.isReadable())) {
         return std::nullopt;
     }
     
