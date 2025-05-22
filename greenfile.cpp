@@ -100,3 +100,25 @@ QJsonObject GreenFile::encodeWorkingDirIntoJson(const QString &_workingDir) cons
     returnObject[jsonKeyWorkingDir] = _workingDir;
     return returnObject;
 }
+
+QJsonObject GreenFile::encodeCommandIntoJson(const GreenCommand &command) const {
+    QJsonObject returnObject;
+
+    returnObject[jsonKeyScriptPath] = command.path;
+
+    QJsonArray arrayDefArgs = QJsonArray::fromStringList(command.defaultArgs);
+    returnObject[jsonKeyDefaultArgs] = arrayDefArgs;
+
+    QJsonArray arrayFillArgs;
+    for (tuple<QString, QString> arg : command.fillableArgs) {
+        QJsonValue left(std::get<0>(arg));
+        QJsonValue right(std::get<1>(arg));
+        QJsonArray argArray = { left, right };
+
+        QJsonValue valueSubArray(argArray);
+        arrayFillArgs.append(valueSubArray);
+    }
+    returnObject[jsonKeyFillableArgs] = arrayFillArgs;
+
+    return returnObject;
+}
