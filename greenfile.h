@@ -4,15 +4,15 @@
 #include "greencommand.h"
 #include <optional>
 #include <QJsonObject>
-#include <Qfile>
+#include <QFile>
+#include <filesystem>
 
 class GreenFile
 {
-    private:
-        QFile file;
     public:
-        GreenFile();
-        GreenFile(const QString &_filePath) : file(_filePath) {}
+        QFile file;
+
+        GreenFile(const std::filesystem::path &_filePath) : file(_filePath) {}
 
         std::optional<GreenCommand> loadCommandFromJson(const QJsonObject &json) const;
 
