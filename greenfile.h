@@ -27,6 +27,7 @@ class GreenFile
 
         QJsonObject encodeWorkingDirIntoJson(const QString &_workingDir) const;
         QJsonObject encodeCommandIntoJson(const GreenCommand &command) const;
+        bool encodeJsonToFile(const QJsonObject &_workingDirectory, const QJsonObject &_command);
 };
 
 #endif // GREENFILE_H
