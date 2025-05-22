@@ -11,16 +11,18 @@
 
 using std::tuple;
 
-bool GreenFile::openFile() {
-    return this->file.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text);
-}
-
 std::optional<QJsonObject> GreenFile::loadJsonFromFile() {
-    if (!(this->file.isOpen() && this->file.isReadable())) {
+    if (this->file.isOpen()) {
+        this->file.close();
+    }
+
+    if (!this->file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         return std::nullopt;
     }
     
     QByteArray fileContents = this->file.readAll();
+    this->file.close();
+
     QJsonParseError parseError;
     QJsonDocument fileContentsParsed = QJsonDocument::fromJson(fileContents, &parseError);
     if (fileContentsParsed.isNull()) {
@@ -125,7 +127,11 @@ QJsonObject GreenFile::encodeCommandIntoJson(const GreenCommand &command) const 
 }
 
 bool GreenFile::encodeJsonToFile(const QJsonObject &_workingDirectory, const QJsonObject &_command) {
-    if (!(this->file.isOpen() && this->file.isWritable())) {
+    if (this->file.isOpen()) {
+        this->file.close();
+    }
+
+    if (!this->file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
         return false;
     }
 
@@ -139,6 +145,7 @@ bool GreenFile::encodeJsonToFile(const QJsonObject &_workingDirectory, const QJs
     QTextStream out(&this->file);
 
     out << fileContents;
+    this->file.close();
 
     return true;
 }
