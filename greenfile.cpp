@@ -1,5 +1,7 @@
 #include "greenfile.h"
-#include <optional>
+#include <QIODevice>
+#include <QByteArray>
+#include <QJsonDocument>
 #include <QJsonValue>
 #include <QJsonArray>
 #include <QString>
@@ -8,6 +10,29 @@
 #include <tuple>
 
 using std::tuple;
+
+bool GreenFile::openFile() {
+    return this->file.open(QIODevice::ReadWrite | QIODevice::Text);
+}
+
+std::optional<QJsonObject> GreenFile::loadJsonFromFile() {
+    if (!this->file.isOpen()) {
+        return std::nullopt;
+    }
+    
+    QByteArray fileContents = this->file.readAll();
+    QJsonParseError parseError;
+    QJsonDocument fileContentsParsed = QJsonDocument::fromJson(fileContents, &parseError);
+    if (fileContentsParsed.isNull()) {
+        return std::nullopt;
+    }
+
+    if (!fileContentsParsed.isObject()) {
+        return std::nullopt;
+    }
+
+    return fileContentsParsed.object();
+}
 
 std::optional<GreenCommand> GreenFile::loadCommandFromJson(const QJsonObject &json) const {
     const QJsonValue valuePath = json["path"];
