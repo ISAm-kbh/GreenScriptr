@@ -1,16 +1,17 @@
 #ifndef GREENCOMMAND_H
 #define GREENCOMMAND_H
 
-#include <string>
-#include <vector>
+#include <QString>
+#include <QStringList>
+#include <QList>
 #include <tuple>
 
 class GreenCommand
 {
     public:
-        std::string path;
-        std::vector<std::string> defaultArgs;
-        std::vector< std::tuple< std::string, std::string >> fillableArgs;
+        QString path;
+        QStringList defaultArgs;
+        QList<std::tuple<QString, QString>> fillableArgs;
 
         GreenCommand();
         GreenCommand(const GreenCommand &);
@@ -19,12 +20,12 @@ class GreenCommand
         GreenCommand &operator=(GreenCommand &&);
 
         GreenCommand(
-            const std::string &_path, 
-            const std::vector<std::string> &_defArgs,
-            const std::vector<std::tuple<std::string, std::string>> &_fillArgs)
+            QStringView _path,
+            const QStringList &_defArgs,
+            const QList<std::tuple<QString, QString>> _fillArgs)
             : path(_path), defaultArgs(_defArgs), fillableArgs(_fillArgs) {}
 
-        std::string AssembleCommand() const;
+        QString AssembleCommand() const;
 };
 
 #endif // GREENCOMMAND_H
