@@ -4,7 +4,6 @@
 #include <QJsonDocument>
 #include <QJsonValue>
 #include <QJsonArray>
-#include <QString>
 #include <QStringList>
 #include <QList>
 #include <tuple>
@@ -85,4 +84,19 @@ std::optional<GreenCommand> GreenFile::loadCommandFromJson(const QJsonObject &js
     }
 
     return GreenCommand(stringPath, stringListDefArgs, tupleListFillArgs);
+}
+
+std::optional<QString> GreenFile::loadWorkingDirFromJson(const QJsonObject &json) const {
+    const QJsonValue valueDir = json["workingDirectory"];
+    if (!valueDir.isString()) {
+        return std::nullopt;
+    }
+
+    return valueDir.toString();
+}
+
+QJsonObject GreenFile::encodeWorkingDirIntoJson(const QString &_workingDir) const {
+    QJsonObject returnObject;
+    returnObject["workindDirectory"] = _workingDir;
+    return returnObject;
 }
