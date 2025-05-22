@@ -19,8 +19,6 @@ class GreenFile
 
         GreenFile(const std::filesystem::path &_filePath) : file(_filePath) {}
 
-        bool openFile();
-
         std::optional<QJsonObject> loadJsonFromFile();
         std::optional<GreenCommand> loadCommandFromJson(const QJsonObject &json) const;
         std::optional<QString> loadWorkingDirFromJson(const QJsonObject &json) const;
