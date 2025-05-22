@@ -13,7 +13,7 @@ class GreenCommand
         QStringList defaultArgs;
         QList<std::tuple<QString, QString>> fillableArgs;
 
-        GreenCommand();
+        GreenCommand() : path(), defaultArgs(), fillableArgs() {}
         GreenCommand(const GreenCommand &);
         GreenCommand(GreenCommand &&);
         GreenCommand &operator=(const GreenCommand &);
