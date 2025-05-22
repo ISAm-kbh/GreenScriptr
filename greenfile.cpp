@@ -6,6 +6,7 @@
 #include <QJsonArray>
 #include <QStringList>
 #include <QList>
+#include <QTextStream>
 #include <tuple>
 
 using std::tuple;
@@ -121,4 +122,23 @@ QJsonObject GreenFile::encodeCommandIntoJson(const GreenCommand &command) const 
     returnObject[this->jsonKeyFillableArgs] = arrayFillArgs;
 
     return returnObject;
+}
+
+bool GreenFile::encodeJsonToFile(const QJsonObject &_workingDirectory, const QJsonObject &_command) {
+    if (!(this->file.isOpen() && this->file.isWritable())) {
+        return false;
+    }
+
+    QVariantMap map = _workingDirectory.toVariantMap();
+
+    map.insert(_command.toVariantMap());
+
+    QJsonDocument document(QJsonObject::fromVariantMap(map));
+
+    QByteArray fileContents = document.toJson(QJsonDocument::Indented);
+    QTextStream out(&this->file);
+
+    out << fileContents;
+
+    return true;
 }
