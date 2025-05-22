@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QString>
+#include <filesystem>
+#include "greencommand.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -16,8 +19,11 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void openFile(const std::filesystem::path &_filePath);
 
 private:
     Ui::MainWindow *ui;
+    QString scriptWorkingDirectory;
+    GreenCommand scriptCommand;
 };
 #endif // MAINWINDOW_H
