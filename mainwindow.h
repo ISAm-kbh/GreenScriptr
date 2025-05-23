@@ -28,5 +28,10 @@ private:
     GreenCommand scriptCommand;
     bool fileOpenStatus;
     std::filesystem::path scriptFilePath;
+
+    void setupSlots();
+private slots:
+    void directoryEdited();
+    void pathEdited();
 };
 #endif // MAINWINDOW_H

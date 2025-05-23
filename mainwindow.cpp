@@ -6,6 +6,7 @@
 #include <QJsonObject>
 #include <QTreeWidgetItem>
 #include <tuple>
+#include <QLineEdit>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -16,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     , fileOpenStatus(false)
 {
     ui->setupUi(this);
+    setupSlots();
 }
 
 MainWindow::~MainWindow()
@@ -125,3 +127,17 @@ void MainWindow::propogateAllBinds() {
     }
 }
 
+void MainWindow::setupSlots() {
+    QObject::connect(this->ui->directoryLineEdit, &QLineEdit::editingFinished,
+            this, &MainWindow::directoryEdited);
+    QObject::connect(this->ui->scriptPathLineEdit, &QLineEdit::editingFinished,
+            this, &MainWindow::pathEdited);
+}
+
+void MainWindow::directoryEdited() {
+    this->scriptWorkingDirectory = this->ui->directoryLineEdit->text();
+}
+
+void MainWindow::pathEdited() {
+    this->scriptCommand.path = this->ui->scriptPathLineEdit->text();
+}
