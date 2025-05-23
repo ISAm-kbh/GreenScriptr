@@ -25,5 +25,7 @@ private:
     Ui::MainWindow *ui;
     QString scriptWorkingDirectory;
     GreenCommand scriptCommand;
+    bool fileOpenStatus;
+    std::filesystem::path scriptFilePath;
 };
 #endif // MAINWINDOW_H
