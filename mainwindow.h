@@ -21,7 +21,7 @@ public:
     ~MainWindow();
     void openFile(const std::filesystem::path &_filePath);
     bool saveFile();
-
+    void propogateAllBinds();
 private:
     Ui::MainWindow *ui;
     QString scriptWorkingDirectory;

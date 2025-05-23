@@ -86,3 +86,42 @@ bool MainWindow::saveFile() {
     this->ui->consoleOutputTextBox->setText("Saved.");
     return true;
 }
+
+// Safety function to quickly ensure all UI items are stored into their container classes
+// Use before:
+// - Saving
+// - Running
+void MainWindow::propogateAllBinds() {
+    this->scriptWorkingDirectory = this->ui->directoryLineEdit->text();
+    this->scriptCommand.path = this->ui->scriptPathLineEdit->text();
+    
+    for(int i = 0; i < this->ui->defaultArgListWidget->count(); i++) {
+        QString itemText = this->ui->defaultArgListWidget->item(i)->text();
+        if (i == this->scriptCommand.defaultArgs.count()) {
+            this->scriptCommand.defaultArgs.append(itemText);
+            continue;
+        } 
+        if (this->scriptCommand.defaultArgs[i] == itemText) {
+            continue;
+        }
+
+        this->scriptCommand.defaultArgs[i] = itemText;
+    }
+
+    for(int i = 0; i < this->ui->fillableArgTreeWidget->topLevelItemCount(); i++) {
+        QTreeWidgetItem *item = this->ui->fillableArgTreeWidget->topLevelItem(i);
+        std::tuple<QString, QString> itemTuple(item->text(0), item->text(1));
+        
+        if (i == this->scriptCommand.fillableArgs.count()) {
+            this->scriptCommand.fillableArgs.append(itemTuple);
+            continue;
+        }
+        if (this->scriptCommand.fillableArgs[i] == itemTuple) {
+            continue;
+        }
+
+
+        this->scriptCommand.fillableArgs[i] = itemTuple; 
+    }
+}
+
