@@ -10,6 +10,10 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , scriptCommand()
+    , scriptWorkingDirectory()
+    , scriptFilePath()
+    , fileOpenStatus(false)
 {
     ui->setupUi(this);
 }
@@ -57,4 +61,7 @@ void MainWindow::openFile(const std::filesystem::path &_filePath) {
         argItem->setText(0, left);
         argItem->setText(1, right);
     }
+
+    fileOpenStatus = true;
+    scriptFilePath = _filePath;
 }
