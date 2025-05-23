@@ -1,5 +1,4 @@
 #include "greencommand.h"
-#include <regex>
 #include <QRegularExpression>
 
 using std::tuple;

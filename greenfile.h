@@ -12,16 +12,20 @@ class GreenFile
 {
     public:
         QFile file;
+        inline static const QString jsonKeyWorkingDir = "workingDirectory";
+        inline static const QString jsonKeyScriptPath = "scriptPath";
+        inline static const QString jsonKeyDefaultArgs = "defaultArguments";
+        inline static const QString jsonKeyFillableArgs = "fillableArguments";
 
         GreenFile(const std::filesystem::path &_filePath) : file(_filePath) {}
 
-        bool openFile();
-
         std::optional<QJsonObject> loadJsonFromFile();
-        std::optional<GreenCommand> loadCommandFromJson(const QJsonObject &json) const;
-        std::optional<QString> loadWorkingDirFromJson(const QJsonObject &json) const;
+        static std::optional<GreenCommand> loadCommandFromJson(const QJsonObject &json);
+        static std::optional<QString> loadWorkingDirFromJson(const QJsonObject &json);
 
-        QJsonObject encodeWorkingDirIntoJson(const QString &_workingDir) const;
+        static QJsonObject encodeWorkingDirIntoJson(const QString &_workingDir);
+        static QJsonObject encodeCommandIntoJson(const GreenCommand &command);
+        bool encodeJsonToFile(const QJsonObject &_workingDirectory, const QJsonObject &_command);
 };
 
 #endif // GREENFILE_H
