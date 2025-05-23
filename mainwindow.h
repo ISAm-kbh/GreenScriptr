@@ -20,6 +20,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void openFile(const std::filesystem::path &_filePath);
+    bool saveFile();
 
 private:
     Ui::MainWindow *ui;
