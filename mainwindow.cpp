@@ -67,3 +67,22 @@ void MainWindow::openFile(const std::filesystem::path &_filePath) {
     fileOpenStatus = true;
     scriptFilePath = _filePath;
 }
+
+bool MainWindow::saveFile() {
+    if (!fileOpenStatus) {
+        this->ui->consoleOutputTextBox->setText("Save error: No file loaded");
+        return false;
+    }
+
+    GreenFile fileHandle(scriptFilePath);
+    QJsonObject objectWorkingDir = GreenFile::encodeWorkingDirIntoJson(scriptWorkingDirectory);
+    QJsonObject objectCommand = GreenFile::encodeCommandIntoJson(scriptCommand);
+
+    if (!fileHandle.encodeJsonToFile(objectWorkingDir, objectCommand)) {
+        this->ui->consoleOutputTextBox->setText("Save error: Couldn't write to file");
+        return false;
+    }
+
+    this->ui->consoleOutputTextBox->setText("Saved.");
+    return true;
+}
