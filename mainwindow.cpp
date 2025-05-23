@@ -53,6 +53,8 @@ void MainWindow::openFile(const std::filesystem::path &_filePath) {
     this->ui->scriptPathLineEdit->setText(this->scriptCommand.path);
     this->ui->defaultArgListWidget->addItems(this->scriptCommand.defaultArgs);
 
+    this->ui->consoleOutputTextBox->setText("");
+
     for (std::tuple<QString, QString> arg : this->scriptCommand.fillableArgs) {
         QString left = std::get<0>(arg);
         QString right = std::get<1>(arg);
