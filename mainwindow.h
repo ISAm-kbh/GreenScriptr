@@ -5,6 +5,8 @@
 #include <QString>
 #include <filesystem>
 #include "greencommand.h"
+#include <QModelIndex>
+#include <QListWidgetItem>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -29,9 +31,18 @@ private:
     bool fileOpenStatus;
     std::filesystem::path scriptFilePath;
 
+    bool defArgItemEdit;
+
     void setupSlots();
 private slots:
     void directoryEdited();
     void pathEdited();
+
+    void defArgAdded();
+    void defArgsReordered(const QModelIndex &sourceParent, int sourceStart,
+            int sourceEnd, const QModelIndex &destinationParen, int destinationRow);
+    void defArgSelected();
+    void defArgEdited(QListWidgetItem *itemChanged);
+    void defArgDeleted();
 };
 #endif // MAINWINDOW_H

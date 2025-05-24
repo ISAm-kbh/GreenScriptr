@@ -7,6 +7,9 @@
 #include <QTreeWidgetItem>
 #include <tuple>
 #include <QLineEdit>
+#include <QPushButton>
+#include <QListWidget>
+#include <QList>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -15,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     , scriptWorkingDirectory()
     , scriptFilePath()
     , fileOpenStatus(false)
+    , defArgItemEdit(true)
 {
     ui->setupUi(this);
     setupSlots();
@@ -132,6 +136,17 @@ void MainWindow::setupSlots() {
             this, &MainWindow::directoryEdited);
     QObject::connect(this->ui->scriptPathLineEdit, &QLineEdit::editingFinished,
             this, &MainWindow::pathEdited);
+
+    QObject::connect(this->ui->defaultArgAddButton, &QPushButton::clicked,
+            this, &MainWindow::defArgAdded);
+    QObject::connect(this->ui->defaultArgListWidget->model(), &QAbstractItemModel::rowsMoved,
+            this, &MainWindow::defArgsReordered);
+    QObject::connect(this->ui->defaultArgListWidget, &QListWidget::itemSelectionChanged,
+            this, &MainWindow::defArgSelected);
+    QObject::connect(this->ui->defaultArgListWidget, &QListWidget::itemChanged,
+            this, &MainWindow::defArgEdited);
+    QObject::connect(this->ui->defaultArgDeleteButton, &QPushButton::clicked,
+            this, &MainWindow::defArgDeleted);
 }
 
 void MainWindow::directoryEdited() {
@@ -140,4 +155,64 @@ void MainWindow::directoryEdited() {
 
 void MainWindow::pathEdited() {
     this->scriptCommand.path = this->ui->scriptPathLineEdit->text();
+}
+
+void MainWindow::defArgAdded() {
+    this->ui->defaultArgListWidget->addItem("new argument");
+    this->scriptCommand.defaultArgs.append("new argument");
+
+    int endIndex = this->ui->defaultArgListWidget->count() - 1;
+    QListWidgetItem *newItem = this->ui->defaultArgListWidget->item(endIndex);
+    this->defArgItemEdit = false;
+    newItem->setFlags(newItem->flags() | Qt::ItemIsEditable);
+
+    this->ui->defaultArgListWidget->editItem(newItem);
+}
+
+void MainWindow::defArgsReordered(const QModelIndex &sourceParent, int sourceStart,
+            int sourceEnd, const QModelIndex &destinationParen, int destinationRow) {
+    QStringList subList;
+    for (int i = sourceStart; i <= sourceEnd; i++) {
+        subList.append(this->scriptCommand.defaultArgs[i]);
+    }
+    this->scriptCommand.defaultArgs.remove(sourceStart, subList.count());
+    for (int i = 0; i < subList.count(); i++) {
+        this->scriptCommand.defaultArgs.insert((destinationRow + i), subList[i]);
+    }
+    this->ui->consoleOutputTextBox->append("dummy text");
+}
+
+void MainWindow::defArgSelected() {
+    if (!this->ui->defaultArgDeleteButton->isEnabled()) {
+        this->ui->defaultArgDeleteButton->setEnabled(true);
+    } 
+}
+
+void MainWindow::defArgEdited(QListWidgetItem *itemChanged) {
+    if (!defArgItemEdit) {
+        defArgItemEdit = true;
+        return;
+    }
+
+    QString newText = itemChanged->text();
+    int itemRow = this->ui->defaultArgListWidget->row(itemChanged);
+
+    this->scriptCommand.defaultArgs[itemRow] = newText;
+}
+
+void MainWindow::defArgDeleted() {
+    QList<QListWidgetItem *> selectedItemList = this->ui->defaultArgListWidget->selectedItems();
+    if (selectedItemList.count() != 1) {
+        return;
+    }
+
+    QListWidgetItem *itemToDelete = selectedItemList.first();
+    int itemRow = this->ui->defaultArgListWidget->row(itemToDelete);
+    int itemIndex = this->scriptCommand.defaultArgs.indexOf(itemToDelete->text());
+
+    this->scriptCommand.defaultArgs.removeAt(itemIndex);
+    this->ui->defaultArgListWidget->takeItem(itemRow);
+    delete itemToDelete;
+
+    this->ui->defaultArgDeleteButton->setEnabled(false);
 }
