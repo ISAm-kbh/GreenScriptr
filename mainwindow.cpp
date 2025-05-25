@@ -188,8 +188,8 @@ void MainWindow::defArgSelected() {
 }
 
 void MainWindow::defArgEdited(QListWidgetItem *itemChanged) {
-    if (!defArgItemEdit) {
-        defArgItemEdit = true;
+    if (!this->defArgItemEdit) {
+        this->defArgItemEdit = true;
         return;
     }
 
