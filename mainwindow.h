@@ -42,6 +42,7 @@ private:
     void setupSlots();
 private slots:
     void directoryEdited();
+    void directoryFileDialog();
     void pathEdited();
 
     void defArgAdded();

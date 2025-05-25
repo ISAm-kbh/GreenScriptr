@@ -9,8 +9,8 @@
 #include <QPushButton>
 #include <QListWidget>
 #include <QList>
-#include <QIcon>
-
+#include <QFileDialog>
+#include <QDir>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -138,6 +138,8 @@ void MainWindow::propogateAllBinds() {
 void MainWindow::setupSlots() {
     QObject::connect(this->ui->directoryLineEdit, &QLineEdit::editingFinished,
             this, &MainWindow::directoryEdited);
+    QObject::connect(this->ui->fileSelectButton, &QPushButton::clicked,
+            this, &MainWindow::directoryFileDialog);
     QObject::connect(this->ui->scriptPathLineEdit, &QLineEdit::editingFinished,
             this, &MainWindow::pathEdited);
 
@@ -170,6 +172,24 @@ void MainWindow::setupSlots() {
 
 void MainWindow::directoryEdited() {
     this->scriptWorkingDirectory = this->ui->directoryLineEdit->text();
+}
+
+void MainWindow::directoryFileDialog() {
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::Directory);
+    dialog.setViewMode(QFileDialog::List);
+    dialog.setOptions(QFileDialog::ShowDirsOnly);
+    dialog.setAcceptMode(QFileDialog::AcceptOpen);
+    dialog.setDirectory(QDir::home());
+    
+    if (dialog.exec()) {
+        QStringList resultList = dialog.selectedFiles();
+        if (resultList.count() == 0) {
+            return;
+        }
+        this->ui->directoryLineEdit->setText(resultList.first());
+        this->scriptWorkingDirectory = resultList.first();
+    }
 }
 
 void MainWindow::pathEdited() {
