@@ -213,5 +213,7 @@ void MainWindow::defArgDeleted() {
     this->ui->defaultArgListWidget->takeItem(itemRow);
     delete itemToDelete;
 
-    this->ui->defaultArgDeleteButton->setEnabled(false);
+    if (this->ui->defaultArgListWidget->count() == 0) {
+        this->ui->defaultArgDeleteButton->setEnabled(false);
+    }
 }
