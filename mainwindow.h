@@ -40,7 +40,7 @@ private slots:
 
     void defArgAdded();
     void defArgsReordered(const QModelIndex &sourceParent, int sourceStart,
-            int sourceEnd, const QModelIndex &destinationParen, int destinationRow);
+            int sourceEnd, const QModelIndex &destinationParent, int destinationRow);
     void defArgSelected();
     void defArgEdited(QListWidgetItem *itemChanged);
     void defArgDeleted();

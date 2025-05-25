@@ -170,7 +170,7 @@ void MainWindow::defArgAdded() {
 }
 
 void MainWindow::defArgsReordered(const QModelIndex &sourceParent, int sourceStart,
-            int sourceEnd, const QModelIndex &destinationParen, int destinationRow) {
+            int sourceEnd, const QModelIndex &destinationParent, int destinationRow) {
     QStringList subList;
     for (int i = sourceStart; i <= sourceEnd; i++) {
         subList.append(this->scriptCommand.defaultArgs[i]);
@@ -179,7 +179,6 @@ void MainWindow::defArgsReordered(const QModelIndex &sourceParent, int sourceSta
     for (int i = 0; i < subList.count(); i++) {
         this->scriptCommand.defaultArgs.insert((destinationRow + i), subList[i]);
     }
-    this->ui->consoleOutputTextBox->append("dummy text");
 }
 
 void MainWindow::defArgSelected() {
