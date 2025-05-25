@@ -239,6 +239,12 @@
       </item>
       <item row="1" column="0" colspan="2">
        <widget class="QTreeWidget" name="fillableArgTreeWidget">
+        <property name="dragEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="dragDropMode">
+         <enum>QAbstractItemView::DragDropMode::InternalMove</enum>
+        </property>
         <column>
          <property name="text">
           <string>Argument Flag</string>
