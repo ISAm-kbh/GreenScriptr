@@ -4,12 +4,13 @@
 #include "greencommand.h"
 #include <optional>
 #include <QJsonObject>
-#include <QTreeWidgetItem>
-#include <tuple>
+#include <QTreeWidget>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QListWidget>
 #include <QList>
+#include <QIcon>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -19,6 +20,9 @@ MainWindow::MainWindow(QWidget *parent)
     , scriptFilePath()
     , fileOpenStatus(false)
     , defArgItemEdit(true)
+    , fillArgItemEdit(true)
+    , fillArgReorderInsert(false)
+    , fillArgReorderIndices(std::tuple<int, int>(0, 0))
 {
     ui->setupUi(this);
     setupSlots();
@@ -147,6 +151,21 @@ void MainWindow::setupSlots() {
             this, &MainWindow::defArgEdited);
     QObject::connect(this->ui->defaultArgDeleteButton, &QPushButton::clicked,
             this, &MainWindow::defArgDeleted);
+
+    QObject::connect(this->ui->fillableArgAddButton, &QPushButton::clicked,
+            this, &MainWindow::fillArgAdded);
+    QObject::connect(this->ui->fillableArgTreeWidget, &QTreeWidget::itemChanged,
+            this, &MainWindow::fillArgEdited);
+    QObject::connect(this->ui->fillableArgTreeWidget->model(),
+            &QAbstractItemModel::rowsAboutToBeRemoved,
+            this, &MainWindow::fillArgsPrereorder);
+    QObject::connect(this->ui->fillableArgTreeWidget->model(),
+            &QAbstractItemModel::rowsInserted,
+            this, &MainWindow::fillArgsReordered);
+    QObject::connect(this->ui->fillableArgTreeWidget, &QTreeWidget::itemSelectionChanged,
+            this, &MainWindow::fillArgSelected);
+    QObject::connect(this->ui->fillableArgDeleteButton, &QPushButton::clicked,
+            this, &MainWindow::fillArgDeleted);
 }
 
 void MainWindow::directoryEdited() {
@@ -215,5 +234,94 @@ void MainWindow::defArgDeleted() {
 
     if (this->ui->defaultArgListWidget->count() == 0) {
         this->ui->defaultArgDeleteButton->setEnabled(false);
+    }
+}
+
+void MainWindow::fillArgAdded() {
+    QTreeWidgetItem *newItem = new QTreeWidgetItem(this->ui->fillableArgTreeWidget);
+    this->fillArgItemEdit = false;
+    newItem->setText(0, "");
+    this->fillArgItemEdit = false;
+    newItem->setText(1, "");
+
+    this->scriptCommand.fillableArgs.append(std::tuple<QString, QString>("", ""));
+    
+    this->fillArgItemEdit = false;
+    newItem->setFlags((newItem->flags() | Qt::ItemIsEditable) & ~Qt::ItemIsDropEnabled);
+    this->ui->fillableArgTreeWidget->editItem(newItem, 0);
+}
+
+void MainWindow::fillArgEdited(QTreeWidgetItem *itemChanged, int column) {
+    if (!this->fillArgItemEdit) {
+        this->fillArgItemEdit = true;
+        return;
+    }
+    if (column < 0) {
+        this->fillArgItemEdit = true;
+        return;
+    }
+    
+    QString newText = itemChanged->text(column);
+    int itemRow = this->ui->fillableArgTreeWidget->indexOfTopLevelItem(itemChanged);
+    switch (column) {
+        case 0:
+            std::get<0>(this->scriptCommand.fillableArgs[itemRow]) = newText;
+            break;
+        case 1:
+            std::get<1>(this->scriptCommand.fillableArgs[itemRow]) = newText;
+            break;
+    } 
+}
+
+void MainWindow::fillArgsPrereorder(const QModelIndex &parent, int first, int last) {
+    this->fillArgReorderInsert = true;
+    this->fillArgReorderIndices = std::tuple<int, int>(first, last);
+}
+
+void MainWindow::fillArgsReordered(const QModelIndex &parent, int first, int last) {
+    if (!this->fillArgReorderInsert) {
+        return;
+    }
+
+    QList<std::tuple<QString, QString>> subList;
+    int subStart, subEnd;
+    std::tie(subStart, subEnd) = this->fillArgReorderIndices;
+    for (int i = subStart; i <= subEnd; i++) {
+        subList.append(this->scriptCommand.fillableArgs[i]);
+    }
+
+    this->scriptCommand.fillableArgs.remove(subStart, subList.count());
+
+    for (int i = 0; i < subList.count(); i++) {
+        this->scriptCommand.fillableArgs.insert((first + i), subList[i]);
+    }
+
+    this->fillArgReorderInsert = false;
+}
+
+void MainWindow::fillArgSelected() {
+    if (!this->ui->fillableArgDeleteButton->isEnabled()) {
+        this->ui->fillableArgDeleteButton->setEnabled(true);
+    }
+}
+
+void MainWindow::fillArgDeleted() {
+    QList<QTreeWidgetItem *> selectedItemList = this->ui->fillableArgTreeWidget->selectedItems();
+    if (selectedItemList.count() != 1) {
+        return;
+    }
+
+    QTreeWidgetItem *itemToDelete = selectedItemList.first();
+    int widgetIndex = this->ui->fillableArgTreeWidget->indexOfTopLevelItem(itemToDelete);
+
+    std::tuple<QString, QString> itemAsTuple(itemToDelete->text(0), itemToDelete->text(1));
+    int itemIndex = this->scriptCommand.fillableArgs.indexOf(itemAsTuple);
+
+    this->scriptCommand.fillableArgs.removeAt(itemIndex);
+    this->ui->fillableArgTreeWidget->takeTopLevelItem(widgetIndex);
+    delete itemToDelete;
+
+    if (this->ui->fillableArgTreeWidget->topLevelItemCount() == 0) {
+        this->ui->fillableArgDeleteButton->setEnabled(false);
     }
 }

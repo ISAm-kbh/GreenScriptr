@@ -7,6 +7,8 @@
 #include "greencommand.h"
 #include <QModelIndex>
 #include <QListWidgetItem>
+#include <QTreeWidgetItem>
+#include <tuple>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -32,6 +34,10 @@ private:
     std::filesystem::path scriptFilePath;
 
     bool defArgItemEdit;
+    bool fillArgItemEdit;
+    bool fillArgReorderInsert;
+
+    std::tuple<int, int> fillArgReorderIndices;
 
     void setupSlots();
 private slots:
@@ -44,5 +50,12 @@ private slots:
     void defArgSelected();
     void defArgEdited(QListWidgetItem *itemChanged);
     void defArgDeleted();
+
+    void fillArgAdded();
+    void fillArgEdited(QTreeWidgetItem *itemChanged, int column);
+    void fillArgsPrereorder(const QModelIndex &parent, int first, int last);
+    void fillArgsReordered(const QModelIndex &parent, int first, int last);
+    void fillArgSelected();
+    void fillArgDeleted();
 };
 #endif // MAINWINDOW_H
