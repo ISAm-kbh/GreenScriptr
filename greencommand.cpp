@@ -53,6 +53,34 @@ QString GreenCommand::AssembleCommand() const {
     return finalCommand;
 }
 
+QStringList GreenCommand::AssembleArguments() const {
+    QStringList finalArgList;
+    
+    QRegularExpression whitespace("^\\s*$");
+    for (QStringView arg : this->defaultArgs) {
+        if (arg.empty()) {
+            continue;
+        }
+        if (whitespace.matchView(arg).hasMatch()) {
+            continue;
+        }
+        
+        finalArgList.append(arg.toString());
+    }
+
+    for (const tuple<QStringView, QStringView> & arg : fillableArgs) {
+        QString left = std::get<0>(arg).toString();
+        bool leftEmpty = left.isEmpty() || whitespace.matchView(left).hasMatch();
+        QString right = std::get<1>(arg).toString();
+        bool rightEmpty = right.isEmpty() || whitespace.matchView(right).hasMatch();
+
+        if (!leftEmpty) finalArgList.append(left);
+        if (!rightEmpty) finalArgList.append(right);
+    }
+
+    return finalArgList;
+}
+
 GreenCommand& GreenCommand::operator=(const GreenCommand & other) {
     if (this == &other) {
        return *this;
