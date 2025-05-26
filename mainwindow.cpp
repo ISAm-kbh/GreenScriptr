@@ -137,6 +137,20 @@ void MainWindow::propogateAllBinds() {
     }
 }
 
+void MainWindow::runCommand() {
+    this->ui->runButton->setEnabled(false);
+    this->propogateAllBinds();
+    this->commandProcess->setProgram(this->scriptCommand.path);
+    this->commandProcess->setWorkingDirectory(this->scriptWorkingDirectory);
+    this->commandProcess->setArguments(this->scriptCommand.AssembleArguments());
+    
+    QString commandLineCommand = this->scriptCommand.AssembleCommand();
+    commandLineCommand.prepend("> ");
+    this->ui->consoleOutputTextBox->append(commandLineCommand);
+    this->commandProcess->start();
+}
+
+
 void MainWindow::setupSlots() {
     QObject::connect(this->ui->directoryLineEdit, &QLineEdit::editingFinished,
             this, &MainWindow::directoryEdited);
@@ -205,10 +219,6 @@ void MainWindow::directoryFileDialog() {
 
 void MainWindow::pathEdited() {
     this->scriptCommand.path = this->ui->scriptPathLineEdit->text();
-}
-
-void MainWindow::runButtonClicked() {
-    this->runCommand();
 }
 
 void MainWindow::defArgAdded() {
@@ -361,17 +371,8 @@ void MainWindow::fillArgDeleted() {
     }
 }
 
-void MainWindow::runCommand() {
-    this->ui->runButton->setEnabled(false);
-    this->propogateAllBinds();
-    this->commandProcess->setProgram(this->scriptCommand.path);
-    this->commandProcess->setWorkingDirectory(this->scriptWorkingDirectory);
-    this->commandProcess->setArguments(this->scriptCommand.AssembleArguments());
-    
-    QString commandLineCommand = this->scriptCommand.AssembleCommand();
-    commandLineCommand.prepend("> ");
-    this->ui->consoleOutputTextBox->append(commandLineCommand);
-    this->commandProcess->start();
+void MainWindow::runButtonClicked() {
+    this->runCommand();
 }
 
 void MainWindow::commandError(QProcess::ProcessError error) {
