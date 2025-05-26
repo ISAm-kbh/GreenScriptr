@@ -26,6 +26,7 @@ class GreenCommand
             : path(_path), defaultArgs(_defArgs), fillableArgs(_fillArgs) {}
 
         QString AssembleCommand() const;
+        QStringList AssembleArguments() const;
 };
 
 #endif // GREENCOMMAND_H
