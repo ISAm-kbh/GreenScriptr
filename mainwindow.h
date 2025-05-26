@@ -41,6 +41,7 @@ private:
 
     std::tuple<int, int> fillArgReorderIndices;
 
+    void setTitle();
     void runCommand();
     void setupSlots();
 private slots:

@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     setupSlots();
+    this->setTitle();
 }
 
 MainWindow::~MainWindow()
@@ -78,6 +79,7 @@ void MainWindow::openFile(const std::filesystem::path &_filePath) {
 
     fileOpenStatus = true;
     scriptFilePath = _filePath;
+    this->setTitle();
 }
 
 bool MainWindow::saveFile() {
@@ -135,6 +137,17 @@ void MainWindow::propogateAllBinds() {
 
         this->scriptCommand.fillableArgs[i] = itemTuple; 
     }
+}
+
+void MainWindow::setTitle() {
+    if (!fileOpenStatus) {
+        this->setWindowTitle("Untitled - GreenScriptr");
+        return;
+    }
+
+    QString openFileTitle = QString::fromStdString(this->scriptFilePath.stem().string());
+    openFileTitle.append(" - GreenScriptr");
+    this->setWindowTitle(openFileTitle);
 }
 
 void MainWindow::runCommand() {
