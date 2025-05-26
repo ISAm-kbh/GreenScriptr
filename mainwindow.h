@@ -9,6 +9,7 @@
 #include <QListWidgetItem>
 #include <QTreeWidgetItem>
 #include <tuple>
+#include <QProcess>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -32,6 +33,7 @@ private:
     GreenCommand scriptCommand;
     bool fileOpenStatus;
     std::filesystem::path scriptFilePath;
+    QProcess *commandProcess;
 
     bool defArgItemEdit;
     bool fillArgItemEdit;
@@ -39,6 +41,7 @@ private:
 
     std::tuple<int, int> fillArgReorderIndices;
 
+    void runCommand();
     void setupSlots();
 private slots:
     void directoryEdited();
@@ -58,5 +61,10 @@ private slots:
     void fillArgsReordered(const QModelIndex &parent, int first, int last);
     void fillArgSelected();
     void fillArgDeleted();
+
+    void runButtonClicked();
+    void commandError(QProcess::ProcessError error);
+    void commandOutputReady(int channel);
+    void commandProcessDone(int exitCode);
 };
 #endif // MAINWINDOW_H

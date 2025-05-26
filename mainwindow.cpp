@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     , scriptCommand()
     , scriptWorkingDirectory()
     , scriptFilePath()
+    , commandProcess(new QProcess(this))
     , fileOpenStatus(false)
     , defArgItemEdit(true)
     , fillArgItemEdit(true)
@@ -31,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete commandProcess;
 }
 
 void MainWindow::openFile(const std::filesystem::path &_filePath) {
@@ -168,6 +170,15 @@ void MainWindow::setupSlots() {
             this, &MainWindow::fillArgSelected);
     QObject::connect(this->ui->fillableArgDeleteButton, &QPushButton::clicked,
             this, &MainWindow::fillArgDeleted);
+
+    QObject::connect(this->ui->runButton, &QPushButton::clicked,
+            this, &MainWindow::runButtonClicked);
+    QObject::connect(this->commandProcess, &QProcess::errorOccurred,
+            this, &MainWindow::commandError);
+    QObject::connect(this->commandProcess, &QProcess::channelReadyRead,
+            this, &MainWindow::commandOutputReady);
+    QObject::connect(this->commandProcess, &QProcess::finished,
+            this, &MainWindow::commandProcessDone);
 }
 
 void MainWindow::directoryEdited() {
@@ -194,6 +205,10 @@ void MainWindow::directoryFileDialog() {
 
 void MainWindow::pathEdited() {
     this->scriptCommand.path = this->ui->scriptPathLineEdit->text();
+}
+
+void MainWindow::runButtonClicked() {
+    this->runCommand();
 }
 
 void MainWindow::defArgAdded() {
@@ -344,4 +359,41 @@ void MainWindow::fillArgDeleted() {
     if (this->ui->fillableArgTreeWidget->topLevelItemCount() == 0) {
         this->ui->fillableArgDeleteButton->setEnabled(false);
     }
+}
+
+void MainWindow::runCommand() {
+    this->ui->runButton->setEnabled(false);
+    this->propogateAllBinds();
+    this->commandProcess->setProgram(this->scriptCommand.path);
+    this->commandProcess->setWorkingDirectory(this->scriptWorkingDirectory);
+    this->commandProcess->setArguments(this->scriptCommand.AssembleArguments());
+    
+    QString commandLineCommand = this->scriptCommand.AssembleCommand();
+    commandLineCommand.prepend("> ");
+    this->ui->consoleOutputTextBox->append(commandLineCommand);
+    this->commandProcess->start();
+}
+
+void MainWindow::commandError(QProcess::ProcessError error) {
+    if (error == QProcess::FailedToStart) {
+        this->ui->consoleOutputTextBox->append(
+                "> Program failed to start, verify the path & permissions.");
+        this->ui->runButton->setEnabled(true);
+    }
+}
+
+void MainWindow::commandOutputReady(int channel) {
+    this->commandProcess->setCurrentReadChannel(channel);
+    while (this->commandProcess->canReadLine()) {
+        QString line = QString::fromLocal8Bit(this->commandProcess->readLine());
+        this->ui->consoleOutputTextBox->append(line);
+    }
+}
+
+void MainWindow::commandProcessDone(int exitCode) {
+    QString exitCodeMessage(QString::number(exitCode));
+    exitCodeMessage.prepend("> exited with code: ");
+    exitCodeMessage.append(".");
+    this->ui->consoleOutputTextBox->append(exitCodeMessage);
+    this->ui->runButton->setEnabled(true);
 }
