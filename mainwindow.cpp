@@ -39,7 +39,7 @@ void MainWindow::openFile(const std::filesystem::path &_filePath) {
     std::optional<QJsonObject> fileObject = fileHandle.loadJsonFromFile();
 
     if (!fileObject.has_value()) {
-        this->ui->consoleOutputTextBox->setText("File read error");
+        this->ui->consoleOutputTextBox->append("> File read error.");
         return;
     }
 
@@ -47,12 +47,12 @@ void MainWindow::openFile(const std::filesystem::path &_filePath) {
     std::optional<GreenCommand> fileCommand = GreenFile::loadCommandFromJson(fileObject.value()); 
     
     if (!fileWorkingDir.has_value()) {
-        this->ui->consoleOutputTextBox->setText("Json parse error: Working directory");
+        this->ui->consoleOutputTextBox->append("Json parse error: Working directory.");
         return;
     }
 
     if (!fileCommand.has_value()) {
-        this->ui->consoleOutputTextBox->setText("Json parse error: Command");
+        this->ui->consoleOutputTextBox->append("Json parse error: Command.");
         return;
     }
     
@@ -63,7 +63,7 @@ void MainWindow::openFile(const std::filesystem::path &_filePath) {
     this->ui->scriptPathLineEdit->setText(this->scriptCommand.path);
     this->ui->defaultArgListWidget->addItems(this->scriptCommand.defaultArgs);
 
-    this->ui->consoleOutputTextBox->setText("");
+    this->ui->consoleOutputTextBox->append("> File loaded.");
 
     for (std::tuple<QString, QString> arg : this->scriptCommand.fillableArgs) {
         QString left = std::get<0>(arg);
@@ -80,7 +80,7 @@ void MainWindow::openFile(const std::filesystem::path &_filePath) {
 
 bool MainWindow::saveFile() {
     if (!fileOpenStatus) {
-        this->ui->consoleOutputTextBox->setText("Save error: No file loaded");
+        this->ui->consoleOutputTextBox->append("> Save error: No file loaded.");
         return false;
     }
 
@@ -89,11 +89,11 @@ bool MainWindow::saveFile() {
     QJsonObject objectCommand = GreenFile::encodeCommandIntoJson(scriptCommand);
 
     if (!fileHandle.encodeJsonToFile(objectWorkingDir, objectCommand)) {
-        this->ui->consoleOutputTextBox->setText("Save error: Couldn't write to file");
+        this->ui->consoleOutputTextBox->append("> Save error: Couldn't write to file.");
         return false;
     }
 
-    this->ui->consoleOutputTextBox->setText("Saved.");
+    this->ui->consoleOutputTextBox->append("> Saved.");
     return true;
 }
 
