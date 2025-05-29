@@ -22,7 +22,8 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr,
+            const std::filesystem::path &_filePath = std::filesystem::path());
     ~MainWindow();
     void openFile(const std::filesystem::path &_filePath);
     bool saveFile();

@@ -12,7 +12,7 @@
 #include <QFileDialog>
 #include <QDir>
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget *parent, const std::filesystem::path &_filePath)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , scriptCommand()
@@ -26,6 +26,9 @@ MainWindow::MainWindow(QWidget *parent)
     , fillArgReorderIndices(std::tuple<int, int>(0, 0))
 {
     ui->setupUi(this);
+    if (!_filePath.empty()) {
+        openFile(_filePath);
+    }
     setupSlots();
     this->setTitle();
 }
