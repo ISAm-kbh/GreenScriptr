@@ -221,7 +221,15 @@ void MainWindow::directoryFileDialog() {
     dialog.setViewMode(QFileDialog::List);
     dialog.setOptions(QFileDialog::ShowDirsOnly);
     dialog.setAcceptMode(QFileDialog::AcceptOpen);
-    dialog.setDirectory(QDir::home());
+
+    QDir startingDir = QDir::home();
+    if (!this->scriptWorkingDirectory.isEmpty()) {
+        QDir storedDir = QDir(this->scriptWorkingDirectory);
+        if (storedDir.exists()) {
+            startingDir = storedDir;
+        }
+    }
+    dialog.setDirectory(startingDir);
     
     if (dialog.exec()) {
         QStringList resultList = dialog.selectedFiles();
