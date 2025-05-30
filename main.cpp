@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "greenwindow.h"
 
 #include <QApplication>
 #include <QCommandLineParser>
@@ -32,7 +33,8 @@ int main(int argc, char *argv[])
         }
     }
 
-    MainWindow w = MainWindow(nullptr, inFilePath);
-    w.show();
+    MainWindow *w = new MainWindow(nullptr, inFilePath);
+    GreenWindow::windows.append(w);
+    w->show();
     return app.exec();
 }
