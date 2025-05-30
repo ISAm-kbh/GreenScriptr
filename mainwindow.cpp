@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 #include "greenfile.h"
 #include "greencommand.h"
+#include "greenwindow.h"
 #include <optional>
 #include <QJsonObject>
 #include <QTreeWidget>
@@ -82,6 +83,7 @@ void MainWindow::openFile(const std::filesystem::path &_filePath) {
 
     fileOpenStatus = true;
     scriptFilePath = _filePath;
+    this->ui->actionSave->setEnabled(true);
     this->setTitle();
 }
 
@@ -230,6 +232,19 @@ void MainWindow::setupSlots() {
             this, &MainWindow::commandOutputReady);
     QObject::connect(this->commandProcess, &QProcess::finished,
             this, &MainWindow::commandProcessDone);
+
+    QObject::connect(this->ui->actionNew, &QAction::triggered,
+            this, &MainWindow::fileActionNew);
+    QObject::connect(this->ui->actionNew_Window, &QAction::triggered,
+            this, &MainWindow::fileActionNewWindow);
+    QObject::connect(this->ui->actionOpen, &QAction::triggered,
+            this, &MainWindow::fileActionOpen);
+    QObject::connect(this->ui->actionSave, &QAction::triggered,
+            this, &MainWindow::fileActionSave);
+    QObject::connect(this->ui->actionSave_As, &QAction::triggered,
+            this, &MainWindow::fileActionSaveAs);
+    QObject::connect(this->ui->actionClose_Window, &QAction::triggered,
+            this, &MainWindow::fileActionCloseWindow);
 }
 
 void MainWindow::directoryEdited() {
@@ -442,4 +457,88 @@ void MainWindow::commandProcessDone(int exitCode) {
     exitCodeMessage.append(".");
     this->ui->consoleOutputTextBox->append(exitCodeMessage);
     this->ui->runButton->setEnabled(true);
+}
+
+void MainWindow::fileActionNew() {
+    this->scriptCommand.clear();
+    this->scriptWorkingDirectory.clear();
+
+    this->ui->directoryLineEdit->clear();
+    this->ui->scriptPathLineEdit->clear();
+    this->ui->defaultArgListWidget->clear();
+    this->ui->fillableArgTreeWidget->clear();
+
+    this->ui->defaultArgDeleteButton->setEnabled(false);
+    this->ui->fillableArgDeleteButton->setEnabled(false);
+    
+    this->scriptFilePath.clear();
+    this->fileOpenStatus = false;
+
+    this->defArgItemEdit = true;
+    this->fillArgItemEdit = true;
+    this->fillArgReorderInsert = false;
+    this->fillArgReorderIndices = std::tuple<int, int>(0, 0);
+
+    this->ui->actionSave->setEnabled(true);
+    this->setTitle();
+    this->ui->consoleOutputTextBox->append("> New File.");
+}
+
+void MainWindow::fileActionNewWindow() const {
+    MainWindow *newWin = new MainWindow();
+    GreenWindow::windows.append(newWin);
+    newWin->show();
+}
+
+void MainWindow::fileActionOpen() {
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::ExistingFile);
+    dialog.setViewMode(QFileDialog::List);
+    dialog.setAcceptMode(QFileDialog::AcceptOpen);
+
+    dialog.setDirectory(QDir::home());
+    if (dialog.exec()) {
+        QStringList resultList = dialog.selectedFiles();
+        if (resultList.count() == 0) {
+            return;
+        }
+        QString resultString = resultList.first();
+        std::filesystem::path resultPath = std::filesystem::path(resultString.toStdString());
+        this->openFile(resultPath);
+    }
+}
+
+void MainWindow::fileActionSave() {
+    if (!this->fileOpenStatus) {
+        return;
+    }
+    this->saveFile();
+}
+
+void MainWindow::fileActionSaveAs() {
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::ExistingFile);
+    dialog.setViewMode(QFileDialog::List);
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+
+    if (fileOpenStatus) {
+        QDir parentDir = QDir(this->scriptFilePath.parent_path());
+        dialog.setDirectory(parentDir);
+    } else {
+        dialog.setDirectory(QDir::home());
+    }
+
+    if (dialog.exec()) {
+        QStringList resultList = dialog.selectedFiles();
+        if (resultList.count() == 0) {
+            return;
+        }
+        QString resultString = resultList.first();
+        std::filesystem::path resultPath = std::filesystem::path(resultString.toStdString());
+        this->createAndSaveFile(resultPath);
+    }
+}
+
+void MainWindow::fileActionCloseWindow() {
+    this->close();
 }
