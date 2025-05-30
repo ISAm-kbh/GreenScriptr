@@ -299,9 +299,15 @@ void MainWindow::defArgsReordered(const QModelIndex &sourceParent, int sourceSta
     for (int i = sourceStart; i <= sourceEnd; i++) {
         subList.append(this->scriptCommand.defaultArgs[i]);
     }
+
     this->scriptCommand.defaultArgs.remove(sourceStart, subList.count());
+    int adjustedDestinationRow = destinationRow;
+    if (destinationRow > sourceStart) {
+        adjustedDestinationRow -= subList.count();
+    }
+
     for (int i = 0; i < subList.count(); i++) {
-        this->scriptCommand.defaultArgs.insert((destinationRow + i), subList[i]);
+        this->scriptCommand.defaultArgs.insert((adjustedDestinationRow + i), subList[i]);
     }
 }
 
