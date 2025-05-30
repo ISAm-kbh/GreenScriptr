@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent, const std::filesystem::path &_filePath)
     , defArgItemEdit(true)
     , fillArgItemEdit(true)
     , fillArgReorderInsert(false)
+    , closeWindowAfterRun(false)
     , fillArgReorderIndices(std::tuple<int, int>(0, 0))
 {
     ui->setupUi(this);
@@ -178,10 +179,22 @@ void MainWindow::setTitle() {
 
 void MainWindow::runCommand() {
     this->ui->runButton->setEnabled(false);
+    this->ui->actionNew->setEnabled(false);
+    this->ui->actionOpen->setEnabled(false);
+    this->ui->actionClose_Window->setEnabled(false);
+    this->ui->actionRun->setEnabled(false);
+    this->ui->actionRun_and_Exit->setEnabled(false);
+
+    this->ui->actionSave->setEnabled(false);
+    this->ui->actionSave_As->setEnabled(false);
+
     this->propogateAllBinds();
     this->commandProcess->setProgram(this->scriptCommand.path);
     this->commandProcess->setWorkingDirectory(this->scriptWorkingDirectory);
     this->commandProcess->setArguments(this->scriptCommand.AssembleArguments());
+
+    this->ui->actionSave->setEnabled(true);
+    this->ui->actionSave_As->setEnabled(true);
     
     QString commandLineCommand = this->scriptCommand.AssembleCommand();
     commandLineCommand.prepend("> ");
@@ -245,6 +258,11 @@ void MainWindow::setupSlots() {
             this, &MainWindow::fileActionSaveAs);
     QObject::connect(this->ui->actionClose_Window, &QAction::triggered,
             this, &MainWindow::fileActionCloseWindow);
+
+    QObject::connect(this->ui->actionRun, &QAction::triggered,
+            this, &MainWindow::runActionRun);
+    QObject::connect(this->ui->actionRun_and_Exit, &QAction::triggered,
+            this, &MainWindow::runActionRunAndExit);
 }
 
 void MainWindow::directoryEdited() {
@@ -446,6 +464,15 @@ void MainWindow::commandError(QProcess::ProcessError error) {
         this->ui->consoleOutputTextBox->append(
                 "> Program failed to start, verify the path & permissions.");
         this->ui->runButton->setEnabled(true);
+        this->ui->actionNew->setEnabled(true);
+        this->ui->actionOpen->setEnabled(true);
+        this->ui->actionClose_Window->setEnabled(true);
+        this->ui->actionRun->setEnabled(true);
+        this->ui->actionRun_and_Exit->setEnabled(true);
+
+        if (this->closeWindowAfterRun) {
+            this->close();
+        }
     }
 }
 
@@ -462,7 +489,17 @@ void MainWindow::commandProcessDone(int exitCode) {
     exitCodeMessage.prepend("> exited with code: ");
     exitCodeMessage.append(".");
     this->ui->consoleOutputTextBox->append(exitCodeMessage);
+
     this->ui->runButton->setEnabled(true);
+    this->ui->actionNew->setEnabled(true);
+    this->ui->actionOpen->setEnabled(true);
+    this->ui->actionClose_Window->setEnabled(true);
+    this->ui->actionRun->setEnabled(true);
+    this->ui->actionRun_and_Exit->setEnabled(true);
+
+    if (this->closeWindowAfterRun) {
+        this->close();
+    }
 }
 
 void MainWindow::fileActionNew() {
@@ -547,4 +584,13 @@ void MainWindow::fileActionSaveAs() {
 
 void MainWindow::fileActionCloseWindow() {
     this->close();
+}
+
+void MainWindow::runActionRun() {
+    this->runCommand();
+}
+
+void MainWindow::runActionRunAndExit() {
+    this->closeWindowAfterRun = true;
+    this->runCommand();
 }

@@ -417,10 +417,16 @@
    <property name="text">
     <string>Run</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
   </action>
   <action name="actionRun_and_Exit">
    <property name="text">
     <string>Run and Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+R</string>
    </property>
   </action>
   <action name="actionManual">

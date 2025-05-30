@@ -40,6 +40,7 @@ private:
     bool defArgItemEdit;
     bool fillArgItemEdit;
     bool fillArgReorderInsert;
+    bool closeWindowAfterRun;
 
     std::tuple<int, int> fillArgReorderIndices;
 
@@ -76,5 +77,8 @@ private slots:
     void fileActionSave();
     void fileActionSaveAs();
     void fileActionCloseWindow();
+
+    void runActionRun();
+    void runActionRunAndExit();
 };
 #endif // MAINWINDOW_H
