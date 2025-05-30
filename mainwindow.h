@@ -27,6 +27,7 @@ public:
     ~MainWindow();
     void openFile(const std::filesystem::path &_filePath);
     bool saveFile();
+    bool createAndSaveFile(const std::filesystem::path &_filePath);
     void propogateAllBinds();
 private:
     Ui::MainWindow *ui;
