@@ -104,6 +104,27 @@ bool MainWindow::saveFile() {
     return true;
 }
 
+bool MainWindow::createAndSaveFile(const std::filesystem::path &_filePath) {
+    GreenFile fileHandle(_filePath);
+    QJsonObject objectWorkingDir = GreenFile::encodeWorkingDirIntoJson(scriptWorkingDirectory);
+    QJsonObject objectCommand = GreenFile::encodeCommandIntoJson(scriptCommand);
+
+    if (!fileHandle.encodeJsonToFile(objectWorkingDir, objectCommand)) {
+        this->ui->consoleOutputTextBox->append("> Save error: Couldn't write file.");
+        return false;
+    }
+
+    this->fileOpenStatus = true;
+    this->scriptFilePath = _filePath;
+    this->setTitle();
+    QString consoleMessage = QString::fromStdString(_filePath.string());
+    consoleMessage.prepend("> Saved as \"");
+    consoleMessage.append("\".");
+    this->ui->consoleOutputTextBox->append(consoleMessage);
+
+    return true;
+}
+
 // Safety function to quickly ensure all UI items are stored into their container classes
 // Use before:
 // - Saving
