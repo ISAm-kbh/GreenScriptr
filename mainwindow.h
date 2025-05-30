@@ -69,5 +69,12 @@ private slots:
     void commandError(QProcess::ProcessError error);
     void commandOutputReady(int channel);
     void commandProcessDone(int exitCode);
+
+    void fileActionNew();
+    void fileActionNewWindow() const;
+    void fileActionOpen();
+    void fileActionSave();
+    void fileActionSaveAs();
+    void fileActionCloseWindow();
 };
 #endif // MAINWINDOW_H
