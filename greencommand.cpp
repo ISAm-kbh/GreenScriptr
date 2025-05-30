@@ -104,3 +104,9 @@ GreenCommand& GreenCommand::operator=(GreenCommand && other) {
     
     return *this;
 }
+
+void GreenCommand::clear() {
+    this->path.clear();
+    this->defaultArgs.clear();
+    this->fillableArgs.clear();
+}

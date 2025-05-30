@@ -27,6 +27,8 @@ class GreenCommand
 
         QString AssembleCommand() const;
         QStringList AssembleArguments() const;
+
+        void clear();
 };
 
 #endif // GREENCOMMAND_H
