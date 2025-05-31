@@ -22,10 +22,12 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr,
+            const std::filesystem::path &_filePath = std::filesystem::path());
     ~MainWindow();
     void openFile(const std::filesystem::path &_filePath);
     bool saveFile();
+    bool createAndSaveFile(const std::filesystem::path &_filePath);
     void propogateAllBinds();
 private:
     Ui::MainWindow *ui;
@@ -38,6 +40,7 @@ private:
     bool defArgItemEdit;
     bool fillArgItemEdit;
     bool fillArgReorderInsert;
+    bool closeWindowAfterRun;
 
     std::tuple<int, int> fillArgReorderIndices;
 
@@ -67,5 +70,15 @@ private slots:
     void commandError(QProcess::ProcessError error);
     void commandOutputReady(int channel);
     void commandProcessDone(int exitCode);
+
+    void fileActionNew();
+    void fileActionNewWindow() const;
+    void fileActionOpen();
+    void fileActionSave();
+    void fileActionSaveAs();
+    void fileActionCloseWindow();
+
+    void runActionRun();
+    void runActionRunAndExit();
 };
 #endif // MAINWINDOW_H
