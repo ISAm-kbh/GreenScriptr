@@ -12,6 +12,7 @@
 #include <QList>
 #include <QFileDialog>
 #include <QDir>
+#include <QIcon>
 
 MainWindow::MainWindow(QWidget *parent, const std::filesystem::path &_filePath)
     : QMainWindow(parent)
@@ -27,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent, const std::filesystem::path &_filePath)
     , closeWindowAfterRun(false)
     , fillArgReorderIndices(std::tuple<int, int>(0, 0))
 {
+    this->setWindowIcon(QIcon(":/Icons/Icon_256_256.png"));
     ui->setupUi(this);
     if (!_filePath.empty()) {
         openFile(_filePath);
