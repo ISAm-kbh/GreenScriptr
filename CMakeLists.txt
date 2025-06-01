@@ -14,6 +14,16 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 
 set(TS_FILES GreenScriptr_en_US.ts)
+set(WIN_ICON_RC "${CMAKE_CURRENT_SOURCE_DIR}/winIcon.rc")
+
+if (WIN32)
+#! Windows specific additions
+    set(PLATFORM_INCLUSIONS
+        ${WIN_ICON_RC}
+    )
+else()
+    set(PLATFORM_INCLUSIONS)
+endif()
 
 set(PROJECT_SOURCES
         main.cpp
@@ -31,6 +41,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         greenfile.h greenfile.cpp
         greenwindow.h greenwindow.cpp
         resources.qrc
+        ${PLATFORM_INCLUSIONS}
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET GreenScriptr APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
