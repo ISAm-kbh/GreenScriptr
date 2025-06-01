@@ -320,7 +320,7 @@
      <x>0</x>
      <y>0</y>
      <width>620</width>
-     <height>24</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -348,14 +348,7 @@
     </property>
     <addaction name="actionManual"/>
    </widget>
-   <widget class="QMenu" name="menuOptions">
-    <property name="title">
-     <string>Options</string>
-    </property>
-    <addaction name="actionAlways_on_Top"/>
-   </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuOptions"/>
    <addaction name="menuRun"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -432,14 +425,6 @@
   <action name="actionManual">
    <property name="text">
     <string>Manual</string>
-   </property>
-  </action>
-  <action name="actionAlways_on_Top">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Always on Top</string>
    </property>
   </action>
  </widget>
