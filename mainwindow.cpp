@@ -538,7 +538,10 @@ void MainWindow::fileActionOpen() {
     dialog.setFileMode(QFileDialog::ExistingFile);
     dialog.setViewMode(QFileDialog::List);
     dialog.setAcceptMode(QFileDialog::AcceptOpen);
-    dialog.setNameFilter("GreenScriptr files (*.greenscript)");
+    QStringList nameFilters = {"Greenscriptr files (*.greenscript)",
+        "JSON files (*.json)",
+        "All files (*)"};
+    dialog.setNameFilters(nameFilters);
 
     dialog.setDirectory(QDir::home());
     if (dialog.exec()) {
@@ -564,7 +567,10 @@ void MainWindow::fileActionSaveAs() {
     dialog.setFileMode(QFileDialog::ExistingFile);
     dialog.setViewMode(QFileDialog::List);
     dialog.setAcceptMode(QFileDialog::AcceptSave);
-    dialog.setNameFilter("GreenScriptr files (*.greenscript)");
+    QStringList nameFilters = {"Greenscriptr file (*.greenscript)",
+        "JSON file (*.json)",
+        "Any file (*)"};
+    dialog.setNameFilters(nameFilters);
     dialog.setDefaultSuffix("greenscript");
 
     if (fileOpenStatus) {
