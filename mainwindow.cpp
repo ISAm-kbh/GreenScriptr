@@ -538,6 +538,7 @@ void MainWindow::fileActionOpen() {
     dialog.setFileMode(QFileDialog::ExistingFile);
     dialog.setViewMode(QFileDialog::List);
     dialog.setAcceptMode(QFileDialog::AcceptOpen);
+    dialog.setNameFilter("GreenScriptr files (*.greenscript)");
 
     dialog.setDirectory(QDir::home());
     if (dialog.exec()) {
@@ -563,6 +564,8 @@ void MainWindow::fileActionSaveAs() {
     dialog.setFileMode(QFileDialog::ExistingFile);
     dialog.setViewMode(QFileDialog::List);
     dialog.setAcceptMode(QFileDialog::AcceptSave);
+    dialog.setNameFilter("GreenScriptr files (*.greenscript)");
+    dialog.setDefaultSuffix("greenscript");
 
     if (fileOpenStatus) {
         QDir parentDir = QDir(this->scriptFilePath.parent_path());
